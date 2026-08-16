@@ -1,0 +1,276 @@
+{
+  "label": "Probe619225",
+  "base": "http://127.0.0.1:8443",
+  "report": [
+    {
+      "check": "return_literal",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "baseline: the node answers at all",
+      "ms": 2
+    },
+    {
+      "check": "create_with_label_and_props",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE\"}}'",
+      "note": "can a typed node be written",
+      "ms": 2
+    },
+    {
+      "check": "match_by_property",
+      "status": "supported",
+      "ok": true,
+      "detail": "rows=0 first=None",
+      "error": "",
+      "note": "property lookup, the read path for exact keys",
+      "ms": 80
+    },
+    {
+      "check": "return_whole_node",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: RETURN currently supports <binding>.<property> or count(*)\"}}'",
+      "note": "what a node looks like as a cell",
+      "ms": 2
+    },
+    {
+      "check": "parameters_params_key",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "does the API accept params, avoiding literal escaping",
+      "ms": 1
+    },
+    {
+      "check": "parameters_parameters_key",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "the other plausible spelling",
+      "ms": 1
+    },
+    {
+      "check": "merge",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: MERGE with following clauses is not executable in Query engine\"}}'",
+      "note": "idempotent upsert; without it ingest needs match-then-create",
+      "ms": 2
+    },
+    {
+      "check": "set_property",
+      "status": "supported",
+      "ok": true,
+      "detail": "None",
+      "error": "",
+      "note": "supersede marking needs SET",
+      "ms": 40
+    },
+    {
+      "check": "relationship_create_with_props",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"ClientProtocol query is not supported yet: write query is not executable by the mutation engine\"}}'",
+      "note": "edges carry the meaning here",
+      "ms": 1
+    },
+    {
+      "check": "variable_length_path",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: property values support integer, float, boolean, and string literals\"}}'",
+      "note": "walking a supersede chain to its tip",
+      "ms": 2
+    },
+    {
+      "check": "optional_match",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: RETURN currently supports <binding>.<property> or count(*)\"}}'",
+      "note": "absence has to be expressible, not inferred",
+      "ms": 1
+    },
+    {
+      "check": "where_comparison",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: property values support integer, float, boolean, and string literals\"}}'",
+      "note": "as-of filtering is a range predicate",
+      "ms": 1
+    },
+    {
+      "check": "order_by_limit",
+      "status": "supported",
+      "ok": true,
+      "detail": "[]",
+      "error": "",
+      "note": "newest-first reads",
+      "ms": 1
+    },
+    {
+      "check": "skip",
+      "status": "supported",
+      "ok": true,
+      "detail": "[]",
+      "error": "",
+      "note": "pagination fallback if cursors are awkward",
+      "ms": 2
+    },
+    {
+      "check": "aggregation_collect",
+      "status": "supported",
+      "ok": true,
+      "detail": "[{'keys': []}]",
+      "error": "",
+      "note": "one row per subject instead of per edge",
+      "ms": 3
+    },
+    {
+      "check": "unwind_inline_list",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: UNWIND batch input must be a parameter\"}}'",
+      "note": "batch writes without one round trip per row",
+      "ms": 1
+    },
+    {
+      "check": "string_functions",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "toLower/split for entity resolution",
+      "ms": 1
+    },
+    {
+      "check": "coalesce",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "defaults without a second query",
+      "ms": 1
+    },
+    {
+      "check": "case_expression",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "branching inside the query",
+      "ms": 1
+    },
+    {
+      "check": "timestamp_function",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "server-side clock, if any",
+      "ms": 1
+    },
+    {
+      "check": "multi_statement_semicolon",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: query transport requires exactly one Cypher statement\"}}'",
+      "note": "schema setup in one call",
+      "ms": 1
+    },
+    {
+      "check": "create_index",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher parse error: Invalid input \\'F\\': expected \\'=\\' or CREATE INDEX ON\"}}'",
+      "note": "property index DDL; the README says the planner uses them",
+      "ms": 1
+    },
+    {
+      "check": "create_constraint_unique",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher parse error: Invalid input \\'F\\': expected \\'=\\' or CREATE CONSTRAINT ON\"}}'",
+      "note": "uniqueness enforced by the database, not by code",
+      "ms": 1
+    },
+    {
+      "check": "show_indexes",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher parse error: Invalid input \\'H\\': expected SET or START\"}}'",
+      "note": "can the schema be inspected",
+      "ms": 0
+    },
+    {
+      "check": "long_string_property",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher parse error: Invalid input \\'b\\': expected \\'.\\', AND, OR, XOR, NOT, \\'=~\\', \\'=\\', \\'<>\\', \\'+\\', \\'-\\', \\'*\\', \\'/\\', \\'%\\', \\'^\\', IN, CONTAINS, STARTS WITH, ENDS WITH, \\'<=\\', \\'>=\\', \\'<\\', \\'>\\', IS NULL, IS NOT NULL, \\'[\\', ",
+      "note": "a full session transcript as one property",
+      "ms": 3
+    },
+    {
+      "check": "unicode_and_quotes",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE\"}}'",
+      "note": "real transcripts contain both",
+      "ms": 2
+    },
+    {
+      "check": "list_property",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE\"}}'",
+      "note": "can a node hold an array",
+      "ms": 2
+    },
+    {
+      "check": "delete",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE\"}}'",
+      "note": "cleanup path; also tells us whether history can be erased",
+      "ms": 1
+    },
+    {
+      "check": "pagination_appears",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: UNWIND batch input must be a parameter\"}}'",
+      "note": "do large results page, and what does the cursor look like",
+      "ms": 1
+    },
+    {
+      "check": "bookmark_accepted",
+      "status": "unsupported",
+      "ok": false,
+      "detail": "",
+      "error": "http 400: b'{\"error\":{\"code\":\"invalid_request\",\"message\":\"OpenCypher query is not supported yet: row execution supports MATCH ... RETURN queries\"}}'",
+      "note": "is the bookmark valid on the way back in",
+      "ms": 1
+    }
+  ]
+}

@@ -1,0 +1,252 @@
+{
+ "base": "http://127.0.0.1:8443",
+ "id_base": 5225202,
+ "label": "P5392614",
+ "checks": [
+  {
+   "group": "A",
+   "name": "key_parameters",
+   "verdict": "ok",
+   "detail": "columns=['n.name'] rows=[[{'type': 'string', 'value': 'alpha'}]]",
+   "query": "MATCH (n:P5392614) WHERE n.name = $wanted RETURN n.name"
+  },
+  {
+   "group": "A",
+   "name": "key_params",
+   "verdict": "NO",
+   "detail": "http 400: missing OpenCypher query parameter $wanted",
+   "query": "MATCH (n:P5392614) WHERE n.name = $wanted RETURN n.name"
+  },
+  {
+   "group": "A",
+   "name": "key_query_parameters",
+   "verdict": "NO",
+   "detail": "http 400: missing OpenCypher query parameter $wanted",
+   "query": "MATCH (n:P5392614) WHERE n.name = $wanted RETURN n.name"
+  },
+  {
+   "group": "A",
+   "name": "param_in_inline_pattern",
+   "verdict": "ok",
+   "detail": "columns=['n.name'] rows=[[{'type': 'string', 'value': 'alpha'}]]",
+   "query": "MATCH (n:P5392614 {name: $wanted}) RETURN n.name"
+  },
+  {
+   "group": "A",
+   "name": "param_int_id_inline",
+   "verdict": "ok",
+   "detail": "columns=['n.id'] rows=[[{'type': 'vertex_id', 'value': 5225202}]]",
+   "query": "MATCH (n:P5392614 {id: $wanted}) RETURN n.id"
+  },
+  {
+   "group": "B",
+   "name": "labelled_gt",
+   "verdict": "ok",
+   "detail": "columns=['n.num'] rows=[[{'type': 'integer', 'value': 2}], [{'type': 'integer', 'value': 3}], [{'type': 'integer', 'value': 4}]]",
+   "query": "MATCH (n:P5392614) WHERE n.num > 1 RETURN n.num"
+  },
+  {
+   "group": "B",
+   "name": "labelled_interval",
+   "verdict": "ok",
+   "detail": "columns=['n.num', 'n.name'] rows=[[{'type': 'integer', 'value': 2}, {'type': 'string', 'value': 'beta'}], [{'type': 'integer', 'va",
+   "query": "MATCH (n:P5392614) WHERE n.num >= 2 AND n.num <= 3 RETURN n.num, n.name"
+  },
+  {
+   "group": "B",
+   "name": "labelled_interval_desc_limit",
+   "verdict": "ok",
+   "detail": "columns=['n.num'] rows=[[{'type': 'integer', 'value': 3}]]",
+   "query": "MATCH (n:P5392614) WHERE n.num <= 3 RETURN n.num ORDER BY n.num DESC LIMIT 1"
+  },
+  {
+   "group": "B",
+   "name": "interval_on_traversal",
+   "verdict": "ok",
+   "detail": "columns=['c.num'] rows=[[{'type': 'integer', 'value': 2}], [{'type': 'integer', 'value': 3}]]",
+   "query": "MATCH (a:P5392614 {id: 5225202})-[:NEXT*1..3]->(c:P5392614) WHERE c.num <= 3 RETURN c.num"
+  },
+  {
+   "group": "B",
+   "name": "not_equal",
+   "verdict": "ok",
+   "detail": "columns=['n.num'] rows=[[{'type': 'integer', 'value': 1}], [{'type': 'integer', 'value': 3}], [{'type': 'integer', 'value': 4}]]",
+   "query": "MATCH (n:P5392614) WHERE n.num <> 2 RETURN n.num"
+  },
+  {
+   "group": "B",
+   "name": "or_combination",
+   "verdict": "ok",
+   "detail": "columns=['n.num'] rows=[[{'type': 'integer', 'value': 1}], [{'type': 'integer', 'value': 3}]]",
+   "query": "MATCH (n:P5392614) WHERE n.num = 1 OR n.num = 3 RETURN n.num"
+  },
+  {
+   "group": "C",
+   "name": "read_prop_before",
+   "verdict": "ok",
+   "detail": "columns=['n.name'] rows=[[{'type': 'string', 'value': 'alpha'}]]",
+   "query": "MATCH (n:P5392614 {id: 5225202}) RETURN n.name"
+  },
+  {
+   "group": "C",
+   "name": "repeat_create_overwrites_props",
+   "verdict": "ok",
+   "detail": "name was 'alpha', now 'REWRITTEN' -> OVERWRITES",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "repeat_create_adds_new_prop",
+   "verdict": "ok",
+   "detail": "extra reads back as 'added'",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "literal_1000",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'x': expected XOR",
+   "query": "CREATE (a:P5392614 {id: 5225303, body: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "group": "D",
+   "name": "literal_4000",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'x': expected XOR",
+   "query": "CREATE (a:P5392614 {id: 5225306, body: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "group": "D",
+   "name": "literal_8000",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'x': expected XOR",
+   "query": "CREATE (a:P5392614 {id: 5225310, body: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "group": "D",
+   "name": "literal_12000",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'x': expected XOR",
+   "query": "CREATE (a:P5392614 {id: 5225314, body: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "group": "D",
+   "name": "literal_16000",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'x': expected XOR",
+   "query": "CREATE (a:P5392614 {id: 5225318, body: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "group": "D",
+   "name": "long_string_as_parameter",
+   "verdict": "ok",
+   "detail": "columns=[] rows=[]",
+   "query": "CREATE (a:P5392614 {id: 5225502, body: $body})-[:LINK]->(b:P5392614 {id: 5225503})"
+  },
+  {
+   "group": "D",
+   "name": "read_back_long",
+   "verdict": "ok",
+   "detail": "columns=['n.body'] rows=[]",
+   "query": "MATCH (n:P5392614 {id: 5225303}) RETURN n.body"
+  },
+  {
+   "group": "E",
+   "name": "sspaths_inline_string_values",
+   "verdict": "NO",
+   "detail": "http 400: missing OpenCypher query parameter $sourceNode",
+   "query": "CALL algo.SSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path"
+  },
+  {
+   "group": "E",
+   "name": "sspaths_with_sourcenode_param",
+   "verdict": "NO",
+   "detail": "http 400: ClientProtocol query is not supported yet: composite parameter $sourceNode is only supported as an UNWIND input",
+   "query": "CALL algo.SSpaths($sourceNode) YIELD path RETURN path"
+  },
+  {
+   "group": "E",
+   "name": "mspaths_string_values",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: relDirection must be 'incoming', 'outgoing', or 'both'",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha','beta'], targetValues: ['gamma','delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path"
+  },
+  {
+   "group": "E",
+   "name": "projection_path.length",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: unexpected tokens after native path procedure",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path.length"
+  },
+  {
+   "group": "E",
+   "name": "projection_path.nodes",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: unexpected tokens after native path procedure",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path.nodes"
+  },
+  {
+   "group": "E",
+   "name": "projection_path.ids",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: unexpected tokens after native path procedure",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path.ids"
+  },
+  {
+   "group": "E",
+   "name": "projection_path.start",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: unexpected tokens after native path procedure",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path.start"
+  },
+  {
+   "group": "E",
+   "name": "projection_nodes_path",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: unknown path projection nodes",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN nodes(path)"
+  },
+  {
+   "group": "E",
+   "name": "projection_path",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: relDirection must be 'incoming', 'outgoing', or 'both'",
+   "query": "CALL algo.MSpaths({sourceLabel: 'P5392614', sourceProperty: 'name', sourceValues: ['alpha'], targetValues: ['delta'], pairwise: true, relTypes: ['NEXT'], relDirection: 'out', maxLen: 3, pathCount: 5, resultLimit: 10}) YIELD path RETURN path"
+  },
+  {
+   "group": "F",
+   "name": "edges_duplicate_on_repeat",
+   "verdict": "ok",
+   "detail": "2 -> 3 on an identical edge write (DUPLICATES, client must dedupe)",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "delete_then_recreate_edge",
+   "verdict": "ok",
+   "detail": "columns=[] rows=[]",
+   "query": "MATCH (a:P5392614 {id: 5225202})-[r:NEXT]->(b:P5392614) DELETE r"
+  },
+  {
+   "group": "F",
+   "name": "count_after_delete",
+   "verdict": "ok",
+   "detail": "columns=['count(*)'] rows=[[{'type': 'integer', 'value': 0}]]",
+   "query": "MATCH (a:P5392614 {id: 5225202})-[:NEXT]->(b:P5392614) RETURN count(*)"
+  },
+  {
+   "group": "F",
+   "name": "unwind_batch_create_right_key",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: UNWIND batch node patterns do not support labels",
+   "query": "UNWIND $rows AS r CREATE (a:P5392614 {id: r.a})-[:BATCH]->(b:P5392614 {id: r.b})"
+  },
+  {
+   "group": "F",
+   "name": "unwind_batch_read_inline",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: UNWIND batch supports one-hop relationships only",
+   "query": "UNWIND $ids AS i MATCH (n:P5392614 {id: i}) RETURN n.id"
+  }
+ ]
+}

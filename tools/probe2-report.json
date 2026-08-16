@@ -1,0 +1,273 @@
+{
+ "base": "http://127.0.0.1:8443",
+ "graph": "default",
+ "label": "P2373476",
+ "checks": [
+  {
+   "group": "A",
+   "name": "create_bare_node",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P2373476)"
+  },
+  {
+   "group": "A",
+   "name": "create_one_int_prop",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P2373476 {k: 1})"
+  },
+  {
+   "group": "A",
+   "name": "create_one_string_prop",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P2373476 {k: 'a'})"
+  },
+  {
+   "group": "A",
+   "name": "create_two_props",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P2373476 {k: 'b', num: 2})"
+  },
+  {
+   "group": "A",
+   "name": "create_three_props",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P2373476 {k: 'c', num: 3, flag: true})"
+  },
+  {
+   "group": "A",
+   "name": "create_with_return",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: CREATE with following clauses is not executable in Query engine",
+   "query": "CREATE (n:P2373476 {k: 'd'}) RETURN n.k"
+  },
+  {
+   "group": "B",
+   "name": "edge_no_props",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "edge_with_props",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "edge_two_hop_one_statement",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "return_property",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "return_count_star",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "return_two_properties",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "return_alias",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "return_distinct",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "hop_one",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "hop_two_fixed",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "var_length_1_3",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "var_length_unbounded",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "hop_reverse",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "where_equals_string",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "where_greater_than",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "where_interval_and",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "where_starts_with",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "where_in_list",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "inline_property_match",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "param_key_params",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "param_key_parameters",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "unwind_param_batch",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "G",
+   "name": "index_legacy_syntax",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: expected query, got CREATE INDEX",
+   "query": "CREATE INDEX ON :P2373476B(k)"
+  },
+  {
+   "group": "G",
+   "name": "index_modern_syntax",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: Invalid input 'i': expected '=' or CREATE INDEX ON",
+   "query": "CREATE INDEX idxP2373476 FOR (n:P2373476B) ON (n.k)"
+  },
+  {
+   "group": "G",
+   "name": "constraint_legacy_syntax",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher parse error: expected query, got create node prop constraint",
+   "query": "CREATE CONSTRAINT ON (n:P2373476B) ASSERT n.k IS UNIQUE"
+  },
+  {
+   "group": "G",
+   "name": "start_clause_parses",
+   "verdict": "ok",
+   "detail": "columns=['count(*)'] rows=[[{'type': 'integer', 'value': 0}]]",
+   "query": "MATCH (n:P2373476B) RETURN count(*)"
+  },
+  {
+   "group": "H",
+   "name": "long_string_1k",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "long_string_16k",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "unicode_and_quote",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "order_by_property",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "set_then_read",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "delete_node",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  }
+ ]
+}

@@ -1,0 +1,301 @@
+{
+ "base": "http://127.0.0.1:8443",
+ "graph": "default",
+ "label": "P3773956",
+ "checks": [
+  {
+   "group": "A",
+   "name": "doc_form_anonymous_nodes",
+   "verdict": "ok",
+   "detail": "columns=[] rows=[]",
+   "query": "CREATE (a {id: 90001})-[:LINK]->(b {id: 90002})"
+  },
+  {
+   "group": "A",
+   "name": "edge_pattern_with_labels",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: CREATE requires source id",
+   "query": "CREATE (a:P3773956 {uid: 'a1'})-[:LINK]->(b:P3773956 {uid: 'b1'})"
+  },
+  {
+   "group": "A",
+   "name": "edge_pattern_with_edge_props",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: CREATE requires source id",
+   "query": "CREATE (a:P3773956 {uid: 'c1'})-[:LINK {w: 1}]->(b:P3773956 {uid: 'c2'})"
+  },
+  {
+   "group": "A",
+   "name": "node_only_create_confirm",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (n:P3773956 {uid: 'lonely'})"
+  },
+  {
+   "group": "A",
+   "name": "two_hop_create_confirm",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: only one-hop edge patterns are executable in Query engine CREATE",
+   "query": "CREATE (a:P3773956 {uid: 'x1'})-[:LINK]->(b:P3773956 {uid: 'x2'})-[:LINK]->(c:P3773956 {uid: 'x3'})"
+  },
+  {
+   "group": "A",
+   "name": "match_then_create",
+   "verdict": "SKIP",
+   "detail": "no labelled seed, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "A",
+   "name": "match_then_create_edge_props",
+   "verdict": "SKIP",
+   "detail": "no labelled seed, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "A",
+   "name": "unwind_batch_create",
+   "verdict": "SKIP",
+   "detail": "no labelled seed, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "return_property",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "return_count_star",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "return_two_props",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "return_alias",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "return_distinct",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "order_by",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "B",
+   "name": "skip_limit",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "hop_one",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "hop_two_fixed",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "var_len_1_3",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "var_len_1_open",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "var_len_unbounded",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "hop_reverse",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "C",
+   "name": "optional_match",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "where_equals",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "where_gt",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "where_interval",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "where_starts_with",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "where_in_list",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "inline_prop_match",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "D",
+   "name": "union",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "param_key_params",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "param_key_parameters",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "E",
+   "name": "unwind_param_read",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "sspaths_yield_path",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "sspaths_return_length",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "sppaths",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "F",
+   "name": "mspaths",
+   "verdict": "SKIP",
+   "detail": "no chain seeded, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "G",
+   "name": "consistency_causal",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "G",
+   "name": "consistency_strong",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "set_then_read",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "delete_edge",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "long_string_16k",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  },
+  {
+   "group": "H",
+   "name": "unicode_and_quote",
+   "verdict": "SKIP",
+   "detail": "no seed data, nothing measured",
+   "query": ""
+  }
+ ]
+}

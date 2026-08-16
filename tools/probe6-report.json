@@ -1,0 +1,108 @@
+{
+ "base": "http://127.0.0.1:8443",
+ "id_base": 3188829,
+ "checks": [
+  {
+   "group": "1",
+   "name": "seed_for_merge_test",
+   "verdict": "ok",
+   "detail": "seeded with name+num+kind on both ends"
+  },
+  {
+   "group": "1",
+   "name": "unnamed_props_survive_repeat_write",
+   "verdict": "ok",
+   "detail": "after a bare-id restatement: name='one' num=1 kind='Claim' -> MERGE semantics, unnamed properties survive, ingest is safe"
+  },
+  {
+   "group": "2",
+   "name": "param_write_1000",
+   "verdict": "ok",
+   "detail": "columns=[] rows=[]"
+  },
+  {
+   "group": "2",
+   "name": "param_readback_1000",
+   "verdict": "ok",
+   "detail": "1000 chars round-tripped intact"
+  },
+  {
+   "group": "2",
+   "name": "param_write_16000",
+   "verdict": "ok",
+   "detail": "columns=[] rows=[]"
+  },
+  {
+   "group": "2",
+   "name": "param_readback_16000",
+   "verdict": "ok",
+   "detail": "16000 chars round-tripped intact"
+  },
+  {
+   "group": "2",
+   "name": "param_write_64000",
+   "verdict": "NO",
+   "detail": "http 500: internal query execution error"
+  },
+  {
+   "group": "2",
+   "name": "param_readback_64000",
+   "verdict": "SKIP",
+   "detail": "write failed, nothing to read"
+  },
+  {
+   "group": "3",
+   "name": "unwind_create_no_labels",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: UNWIND batch node supports only the id property"
+  },
+  {
+   "group": "3",
+   "name": "verify_batch_landed",
+   "verdict": "ok",
+   "detail": "columns=['n.kind'] rows=[[{'type': 'null'}]]"
+  },
+  {
+   "group": "3",
+   "name": "match_by_property_only",
+   "verdict": "ok",
+   "detail": "columns=['count(*)'] rows=[[{'type': 'integer', 'value': 0}]]"
+  },
+  {
+   "group": "3",
+   "name": "unwind_create_100_rows",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: UNWIND batch node supports only the id property"
+  },
+  {
+   "group": "3",
+   "name": "unwind_create_1000_rows",
+   "verdict": "NO",
+   "detail": "http 400: OpenCypher query is not supported yet: UNWIND batch node supports only the id property"
+  },
+  {
+   "group": "4",
+   "name": "mspaths_outgoing",
+   "verdict": "NO",
+   "detail": "http 400: missing OpenCypher query parameter $sourceLabel"
+  },
+  {
+   "group": "4",
+   "name": "sspaths_scalar_param",
+   "verdict": "ok",
+   "detail": "columns=['path'] rows=[[{'type': 'path', 'value': {'nodes': [{'id': 3190829, 'labels': [], 'properties"
+  },
+  {
+   "group": "4",
+   "name": "sppaths_scalar_param",
+   "verdict": "ok",
+   "detail": "columns=['path'] rows=[[{'type': 'path', 'value': {'nodes': [{'id': 3190829, 'labels': [], 'properties"
+  },
+  {
+   "group": "5",
+   "name": "delete_then_create_gives_exactly_one",
+   "verdict": "ok",
+   "detail": "two writes -> 2 edges; delete then one write -> 1"
+  }
+ ]
+}
