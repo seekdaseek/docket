@@ -16,7 +16,9 @@ ends with a closed lid loses nothing.
 from __future__ import annotations
 
 import argparse
+import collections
 import json
+import random
 import os
 import sys
 import time
@@ -57,6 +59,75 @@ def connect(args) -> HydraClient:
     )
 
 
+def select(instances, sample: int | None, seed: int, min_abstention: int):
+    """A slice that contains both kinds of question.
+
+    `--limit` slices the file, it does not sample: the first 25 oracle
+    instances are 100% temporal-reasoning with ZERO abstention questions, so a
+    limit-slice can only ever measure one half of the calibration pair. A
+    prompt change that lowers false refusals MUST be checked against the
+    abstention set in the same run, or it is optimising one number blind.
+
+    Proportional by question type so the mix matches the benchmark, with an
+    optional floor on abstention questions. The floor breaks proportionality
+    on purpose and the run says so.
+
+    Allocation is largest-remainder: exact shares floored, then the leftover
+    handed out by biggest fractional part, then a round-robin top-up for any
+    shortfall caused by a stratum running dry. A naive loop that recomputes
+    proportions against a shrinking remainder under-fills -- it returned 40
+    for a requested 60, caught by test_sample_size_is_respected.
+    """
+    if not sample or sample >= len(instances):
+        return list(instances), False
+    rng = random.Random(seed)
+    strata: dict = {}
+    for inst in instances:
+        key = "abstention" if inst.is_abstention else inst.question_type
+        strata.setdefault(key, []).append(inst)
+    for group in strata.values():
+        rng.shuffle(group)
+
+    picked = []
+    forced = False
+    if min_abstention and strata.get("abstention"):
+        absts = strata["abstention"]
+        take = min(min_abstention, len(absts), sample)
+        proportional = sample * len(absts) / len(instances)
+        forced = take > proportional
+        picked.extend(absts[:take])
+        strata["abstention"] = absts[take:]
+
+    remaining = sample - len(picked)
+    pool = {k: v for k, v in strata.items() if v}
+    total = sum(len(v) for v in pool.values())
+    if remaining > 0 and total:
+        exact = {k: remaining * len(v) / total for k, v in pool.items()}
+        take = {k: min(int(v), len(pool[k])) for k, v in exact.items()}
+        short = remaining - sum(take.values())
+        # leftover by largest fractional part
+        order = sorted(exact, key=lambda k: -(exact[k] - int(exact[k])))
+        for key in order:
+            if short <= 0:
+                break
+            if take[key] < len(pool[key]):
+                take[key] += 1
+                short -= 1
+        # round-robin top-up if a stratum ran dry
+        while short > 0 and any(take[k] < len(pool[k]) for k in pool):
+            for key in pool:
+                if short <= 0:
+                    break
+                if take[key] < len(pool[key]):
+                    take[key] += 1
+                    short -= 1
+        for key, n in take.items():
+            picked.extend(pool[key][:n])
+
+    rng.shuffle(picked)
+    return picked[:sample], forced
+
+
 def done_ids(path: Path) -> set[str]:
     if not path.exists():
         return set()
@@ -91,7 +162,21 @@ def main() -> int:
     ap.add_argument("--question")
     ap.add_argument("--at", help="question date, e.g. '2023/05/01 (Mon) 09:00'")
     ap.add_argument("--data", help="LongMemEval json to read questions from")
-    ap.add_argument("--limit", type=int)
+    ap.add_argument("--limit", type=int,
+                    help="first N instances. NOT a sample: the first 25 are "
+                         "all one category with no abstention questions.")
+    ap.add_argument("--sample", type=int,
+                    help="stratified sample of N, proportional by question "
+                         "type. Use this, not --limit, for any calibration "
+                         "check.")
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--epoch-dates", action="store_true",
+                    help="render evidence timestamps as raw epochs, exactly as "
+                         "before Aug 17. The only variable left between this "
+                         "and the Run A baseline.")
+    ap.add_argument("--min-abstention", type=int, default=0,
+                    help="force at least K abstention questions into the "
+                         "sample. Breaks proportionality; the run says so.")
     ap.add_argument("--no-model", action="store_true",
                     help="retrieval only: no spend, evidence written anyway")
     ap.add_argument("--model")
@@ -129,7 +214,8 @@ def main() -> int:
     kw = {} if a.as_of_tolerance is None else {"as_of_tolerance": a.as_of_tolerance}
     answerer = Answerer(retriever, gate, llm, candidates=a.candidates,
                         evidence=a.evidence, sessions=a.sessions,
-                        per_session=a.per_session, **kw)
+                        per_session=a.per_session,
+                        dates="epoch" if a.epoch_dates else "human", **kw)
 
     # -- one question -------------------------------------------------------
     if a.question:
@@ -147,6 +233,14 @@ def main() -> int:
     out_path = Path(a.out)
     already = done_ids(out_path)
     instances = dataset.load(a.data, limit=a.limit)
+    instances, forced = select(instances, a.sample, a.seed, a.min_abstention)
+    mix = collections.Counter(
+        "abstention" if i.is_abstention else i.question_type for i in instances)
+    print(f"slice {len(instances)}: {dict(sorted(mix.items()))}", flush=True)
+    if forced:
+        print("      abstention floor applied -- this slice is NOT "
+              "proportional, do not quote its accuracy as a benchmark number",
+              flush=True)
     tally = {ANSWERED: 0, ABSENT: 0, UNMEASURED: 0, "skipped": 0}
     started = time.time()
 
@@ -179,6 +273,18 @@ def main() -> int:
 
     elapsed = time.time() - started
     print(f"\n{tally}  in {elapsed:.1f}s")
+    if llm is not None:
+        # This is the expensive run, so it prices itself. judge_run and
+        # baseline_run reported spend from the start and this one did not,
+        # which meant the first paid run produced no cost number at all.
+        print(f"spend            {llm.calls} calls, {llm.retries} retries, "
+              f"{llm.input_tokens} in / {llm.output_tokens} out tokens")
+        if llm.trailing_prose:
+            print(f"trailing prose   {llm.trailing_prose}/{llm.calls} replies "
+                  f"carried commentary after the JSON (parsed anyway)")
+        if tally.get(UNMEASURED):
+            print(f"⚠ unmeasured     {tally[UNMEASURED]} — read their `reason` "
+                  f"field before trusting any score from this file")
     print(f"wrote {out_path}")
     print("scoring is a separate step: this run records what was answered and "
           "what was refused, not whether either was right.")

@@ -16,6 +16,7 @@ allowed to produce a confident sentence with nothing behind it.
 """
 from __future__ import annotations
 
+import datetime
 import json
 
 from .llm import LLMError
@@ -40,6 +41,16 @@ NOT_IN_MEMORY = "NOT_IN_MEMORY"
 # 24-hour window lets in when there are distractors.
 DEFAULT_TOLERANCE = 86_400
 
+# REVERTED Aug 17 to the exact text of Run A, because Run A beat the rewrite on
+# an identical 25-question slice: answered 15 vs 7, accuracy 0.3333 vs 0.2381,
+# false refusal 0.375 vs 0.6667, trailing prose 13/25 vs 21/25. The rewrite
+# added a long block about mention-vs-event dates and softened the refusal rule;
+# whatever it bought, it cost half the answers and made the model chattier.
+#
+# The ONE surviving change is the DATE FORMAT in the evidence block (epoch ->
+# human), isolated so it can be measured on its own. That is the change with a
+# real mechanism behind it: the model was caught doing arithmetic on 10-digit
+# integers in its own leaked commentary.
 SYSTEM = """You answer a question using ONLY the numbered evidence supplied.
 
 The evidence is claims extracted from the user's own past conversations, each
@@ -60,14 +71,50 @@ Reply as JSON only, no markdown fences:
 {"answer": "<the answer, or NOT_IN_MEMORY>", "used": [<evidence numbers>]}"""
 
 
-def render_evidence(items: list[dict], limit_chars: int = 700) -> str:
-    """The evidence block the model sees. Numbered so citations are checkable."""
+def fmt(ts, dates: str = "human"):
+    """Timestamp for the prompt. `epoch` restores the pre-Aug-17 rendering
+    exactly, so the date format can be reverted with a flag rather than a
+    code change."""
+    return human_date(ts) if dates == "human" else ts
+
+
+def human_date(ts) -> str:
+    """Epoch -> a date a model can actually reason with.
+
+    Measured Aug 17: every timestamp in the evidence block was a raw Unix epoch,
+    and 9 of 9 false refusals on the temporal-reasoning slice were ordering or
+    duration questions whose gold claim WAS in the evidence. The model was seen
+    attempting arithmetic on 10-digit integers in its own leaked commentary
+    ("attended on 1685307840, while ... was attended on 16..."). Asking a
+    language model to subtract epochs is asking it to do the one thing it is
+    worst at, and rule 2 then told it to refuse.
+    """
+    if ts is None:
+        return "unknown"
+    try:
+        stamp = datetime.datetime.fromtimestamp(int(ts), datetime.timezone.utc)
+    except (ValueError, OSError, OverflowError):
+        return str(ts)
+    return stamp.strftime("%Y-%m-%d (%a)")
+
+
+def render_evidence(items: list[dict], limit_chars: int = 700,
+                    dates: str = "human") -> str:
+    """The evidence block the model sees. Numbered so citations are checkable.
+
+    `mentioned` rather than `said`: the label is doing real work. The timestamp
+    is when the user TALKED about the thing, not when the thing happened, and
+    two claims from one conversation share it even when they describe events
+    months apart. Naming it honestly is what lets the system prompt tell the
+    model not to order events by it.
+    """
     lines = []
     for i, item in enumerate(items, 1):
         claim = item.get("claim") or {}
         when = item.get("when") or claim.get("ts")
         head = (f"[{i}] {claim.get('subj')} {claim.get('pred')} "
-                f"{claim.get('obj')}  (kind={claim.get('kind')}, said {when})")
+                f"{claim.get('obj')}  (kind={claim.get('kind')}, "
+                f"said {fmt(when, dates)})")
         lines.append(head)
         text = item.get("text")
         if text:
@@ -75,7 +122,7 @@ def render_evidence(items: list[dict], limit_chars: int = 700) -> str:
             lines.append(f"    said: {snippet}")
         for older in item.get("superseded") or []:
             lines.append(f"    replaced an earlier value: {older.get('obj')} "
-                         f"(said {older.get('ts')})")
+                         f"(said {fmt(older.get('ts'), dates)})")
     return "\n".join(lines)
 
 
@@ -85,7 +132,8 @@ class Answerer:
     def __init__(self, retriever, gate, llm=None, *, candidates: int = 12,
                  evidence: int = 6, min_score: float = 0.0,
                  as_of_tolerance: int = DEFAULT_TOLERANCE,
-                 sessions: int = 0, per_session: int = 40):
+                 sessions: int = 0, per_session: int = 40,
+                 dates: str = "human"):
         self.retriever = retriever
         self.gate = gate
         self.llm = llm
@@ -97,6 +145,9 @@ class Answerer:
         # sessions and returning everything in the best ones.
         self.sessions = int(sessions)
         self.per_session = int(per_session)
+        # "human" or "epoch". The only variable left between this answerer and
+        # the measured Run A baseline.
+        self.dates = dates
 
     # -- selection ----------------------------------------------------------
     def gather(self, question: str, asked_at: int) -> dict:
@@ -171,9 +222,9 @@ class Answerer:
             return self._result(UNMEASURED, None, items, report,
                                 reason="no model configured; evidence gathered "
                                        "but nothing answered it")
-        block = render_evidence(items)
+        block = render_evidence(items, dates=self.dates)
         user = (f"Question: {question}\n"
-                f"Asked at: {asked_at}\n\n"
+                f"Asked at: {fmt(asked_at, self.dates)}\n\n"
                 f"Evidence:\n{block}")
         try:
             reply = self.llm.complete_json(SYSTEM, user)
