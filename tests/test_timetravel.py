@@ -161,3 +161,30 @@ class Dates(unittest.TestCase):
 
     def test_missing_is_named_not_crashed(self):
         self.assertEqual("unknown", timetravel.when(None))
+
+
+class HeaderMatchesTheWalk(unittest.TestCase):
+    """The header reports `chain`, and the walk below prints the chain. If the
+    ranking is skipped the counter stays zero while the walk still finds edges,
+    and the tool contradicts itself in the middle of a demo. That shipped once."""
+
+    def test_probing_one_fact_sets_its_chain_count(self):
+        facts = timetravel.changed_facts(series("p", ["A", "B"]))
+        self.assertEqual(0, facts[0]["chain"])
+
+        class Ret:
+            def superseded_by(self, key):
+                return [{"obj": "A"}]
+
+        timetravel.rank_by_chain(Ret(), facts[:1])
+        self.assertEqual(1, facts[0]["chain"])
+
+    def test_probe_limit_does_not_skip_the_first_fact(self):
+        facts = timetravel.changed_facts(series("p", ["A", "B"]))
+
+        class Ret:
+            def superseded_by(self, key):
+                return [{}]
+
+        timetravel.rank_by_chain(Ret(), facts, probe=1)
+        self.assertEqual(1, facts[0]["chain"])

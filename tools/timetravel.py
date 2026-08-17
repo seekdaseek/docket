@@ -262,11 +262,16 @@ def main() -> int:
             print(f"no changing fact for predicate {a.pred!r}", file=sys.stderr)
             print("try: python3 tools/timetravel.py --list 20", file=sys.stderr)
             return 4
+        # Probe the chain for THIS fact even though the ranking was skipped.
+        # Without it the header printed "none linked by SUPERSEDES" and the
+        # walk below then printed the chain -- the tool contradicting itself
+        # on screen.
+        rank_by_chain(ret, picked[:1])
         show(ret, picked[0])
         return 0
 
     show(ret, facts[0])
-    print(f"({len(facts) - 1} other facts in this graph changed value the same way; "
+    print(f"({len(facts)} other facts in this graph changed value the same way; "
           f"`--list 20` shows them.)")
     return 0
 
