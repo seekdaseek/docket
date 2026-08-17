@@ -128,16 +128,30 @@ def select(instances, sample: int | None, seed: int, min_abstention: int):
     return picked[:sample], forced
 
 
-def done_ids(path: Path) -> set[str]:
+def done_ids(path: Path, retry_unmeasured: bool = False) -> set[str]:
+    """Question ids already recorded, so a stopped run resumes for free.
+
+    `retry_unmeasured` exists because resumption had a hole: a row written as
+    `unmeasured` (a dead socket after the lid closed, a model that returned
+    nothing) counts as done and is skipped forever on re-run, leaving a
+    permanent gap in a benchmark that reports its own denominator. With the
+    flag those ids are NOT treated as done, so a second pass retries exactly
+    the failures and nothing else.
+    """
     if not path.exists():
         return set()
     out = set()
     with path.open() as fh:
         for line in fh:
             try:
-                out.add(json.loads(line)["question_id"])
+                row = json.loads(line)
+                qid = row["question_id"]
             except (ValueError, KeyError):
                 continue
+            if retry_unmeasured and row.get("status") == UNMEASURED:
+                out.discard(qid)
+                continue
+            out.add(qid)
     return out
 
 
@@ -170,6 +184,10 @@ def main() -> int:
                          "type. Use this, not --limit, for any calibration "
                          "check.")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--retry-unmeasured", action="store_true",
+                    help="re-run only the rows that failed to measure. The "
+                         "last row for a question id wins, so a retry that "
+                         "succeeds supersedes the failure.")
     ap.add_argument("--epoch-dates", action="store_true",
                     help="render evidence timestamps as raw epochs, exactly as "
                          "before Aug 17. The only variable left between this "
@@ -231,7 +249,7 @@ def main() -> int:
 
     # -- a slice of the benchmark ------------------------------------------
     out_path = Path(a.out)
-    already = done_ids(out_path)
+    already = done_ids(out_path, a.retry_unmeasured)
     instances = dataset.load(a.data, limit=a.limit)
     instances, forced = select(instances, a.sample, a.seed, a.min_abstention)
     mix = collections.Counter(

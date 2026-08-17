@@ -49,16 +49,30 @@ Reply with JSON and nothing else:
 {{"answer": "<the answer, or {NOT_IN_MEMORY}>"}}"""
 
 
-def done_ids(path: Path) -> set[str]:
+def done_ids(path: Path, retry_unmeasured: bool = False) -> set[str]:
+    """Question ids already recorded, so a stopped run resumes for free.
+
+    `retry_unmeasured` exists because resumption had a hole: a row written as
+    `unmeasured` (a dead socket after the lid closed, a model that returned
+    nothing) counts as done and is skipped forever on re-run, leaving a
+    permanent gap in a benchmark that reports its own denominator. With the
+    flag those ids are NOT treated as done, so a second pass retries exactly
+    the failures and nothing else.
+    """
     if not path.exists():
         return set()
     out = set()
     with path.open() as fh:
         for line in fh:
             try:
-                out.add(json.loads(line)["question_id"])
+                row = json.loads(line)
+                qid = row["question_id"]
             except (ValueError, KeyError):
                 continue
+            if retry_unmeasured and row.get("status") == UNMEASURED:
+                out.discard(qid)
+                continue
+            out.add(qid)
     return out
 
 
@@ -90,6 +104,8 @@ def main() -> int:
     ap.add_argument("--data", required=True)
     ap.add_argument("--limit", type=int)
     ap.add_argument("--model")
+    ap.add_argument("--retry-unmeasured", action="store_true",
+                    help="re-run only the rows that failed to measure")
     ap.add_argument("--out", default=str(BASELINE))
     a = ap.parse_args()
 
@@ -100,7 +116,7 @@ def main() -> int:
     llm = Anthropic(key, model=a.model) if a.model else Anthropic(key)
 
     out_path = Path(a.out)
-    already = done_ids(out_path)
+    already = done_ids(out_path, a.retry_unmeasured)
     instances = dataset.load(a.data, limit=a.limit)
     print(f"no-memory baseline over {len(instances)} questions, model {llm.model}")
 
